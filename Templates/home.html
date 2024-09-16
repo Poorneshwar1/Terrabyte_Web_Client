@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Plant gallery</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <style>
+
+    .spinner {
+      border: 8px solid #f3f3f3; /* Light gray */
+      border-top: 8px solid #3498db; /* Blue */
+      border-radius: 50%;
+      width: 90px;
+      height: 90px;
+      animation: spin 2s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .fixed-height-card {
+        height: 500px; /* Adjust the height as needed */
+        overflow-y: auto;
+    }
+  </style>
+
+</head>
+
+<body class="bg-secondary">
+
+<div class="container">
+  
+    <div class="row justify-content-center">
+        <div class="col-sm-6 m-2">
+             <form action="/downloadImgs" method="POST" id="myform">  
+              
+              <div class="col-sm-6">
+                <select name="plant_type" id="plant_type">
+                  {%for plant in plants%}
+                  <option value="{{plant}}">{{plant}}</option>
+                  {%endfor%}
+                  <option value="">Random</option>
+                </select>
+              </div>
+              
+              <div class="col-sm-6 mt-2">
+                <button type="submit" class="btn btn-primary" id = "download-button">Download Images</button>
+              </div>
+                
+              </form>
+        </div>
+    </div>
+
+    <div class="row justify-content-center align-items-center" id="spin_div">
+
+      <div class="spinner" id="loading-spinner"></div>  
+  
+    </div> 
+  
+
+    
+    {%block content%}
+    
+    {%endblock%}
+
+    
+</div>
+
+<script>
+  
+  document.getElementById('loading-spinner').style.display = 'none';
+  document.getElementById('download-button').addEventListener('click', function() {
+      let currentUrl = window.location.href;
+      //console.log(currentUrl);
+      // Show the loading spinner
+      document.getElementById('loading-spinner').style.display = 'block';
+
+      // Make an AJAX request to the Flask backend
+      // const response = fetch('/downloadImgs', {
+      //     method: 'POST'
+      // });
+
+      // if (response.redirected) {
+      //     // Follow the redirect to the image page after the download is complete
+      //     window.location.href = response.url;
+      // } else {
+      //     // Handle other responses
+      //     document.getElementById('loading-spinner').style.display = 'none';
+      //     alert("An error occurred while downloading images.");
+      // }
+      if (window.location.href !== currentUrl) {
+      document.getElementById('loading-spinner').style.display = 'none';
+      
+      currentUrl = window.location.href;
+    } else {
+
+
+    }
+  });
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,82 @@
+{%extends 'home.html'%}
+
+{%block content%}
+
+<div class="row justify-content-center align-items-center d-flex">
+    <!-- Left side: Buttons and Image (60% width) -->
+    <div class="col-lg-7 col-md-7">
+        <div class="d-flex justify-content-between align-items-center">
+            <a type="button" class="btn btn-primary " id="prevBtn">Prev Img</a>
+            <div class="text-center">
+                <h4>{{PlantName}}</h4>
+                <img id="image" src="{{url_for('show_img', filename = files[0])}}" alt="image" class="img img-thumbnail">
+            </div>
+            <a type="button" class="btn btn-primary " id="nextBtn" >Next Img</a>
+        </div>
+    </div>
+
+    <!-- Right side: Card (40% width) -->
+    <div class="col-lg-5 col-md-5 mb-4">
+        <div class="card">
+            <div class="fixed-height-card">
+                <h5 class="card-title">Plant Details</h5>
+                <pre id="jsonData"></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    let imageJsonData = [];
+        let currentIndex = 0;
+
+        // Fetch the image-JSON data
+        fetch('/get_jsons')
+            .then(response => response.json())
+            .then(data => {
+                // Store the image-JSON pairs as an array of objects
+                imageJsonData = Object.entries(data); // Array of [imageFilename, jsonContent] pairs
+                displayImageAndJson(currentIndex); // Display the first image and JSON content
+            })
+            .catch(error => console.error('Error fetching image and JSON data:', error));
+
+        // Display the image and corresponding JSON data for a given index
+        function displayImageAndJson(index) {
+            const [imageFilename, jsonData] = imageJsonData[index];
+
+            // Update the image source
+            const imgElement = document.getElementById('image');
+            imgElement.src = `/show_img/${imageFilename}`;
+            imgElement.alt = imageFilename;
+
+            // Update the JSON content
+            const jsonElement = document.getElementById('jsonData');
+            jsonElement.textContent = JSON.stringify(jsonData, null, 2);  // Pretty print JSON
+
+            // Enable/disable buttons based on index
+            document.getElementById('prevBtn').disabled = index === 0;
+            document.getElementById('nextBtn').disabled = index === imageJsonData.length - 1;
+        }
+
+        // Event listeners for buttons
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                displayImageAndJson(currentIndex);
+            }
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            if (currentIndex < imageJsonData.length - 1) {
+                currentIndex++;
+                displayImageAndJson(currentIndex);
+            }
+        });
+
+
+</script>
+
+{%endblock%}
